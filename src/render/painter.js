@@ -6,7 +6,7 @@ import { mat4 } from '@mapbox/gl-matrix';
 import SourceCache from '../source/source_cache';
 import EXTENT from '../data/extent';
 import pixelsToTileUnits from '../source/pixels_to_tile_units';
-import { filterObject } from '../util/util';
+import { filterObject, values } from '../util/util';
 import VertexArrayObject from './vertex_array_object';
 import { RasterBoundsArray, PosArray } from '../data/array_types';
 import rasterBoundsAttributes from '../data/raster_bounds_attributes';
@@ -399,9 +399,22 @@ class Painter {
         }
 
         if (this.options.showTileBoundaries) {
-            const sourceCache = this.style.sourceCaches[Object.keys(this.style.sourceCaches)[0]];
-            if (sourceCache) {
-                draw.debug(this, sourceCache, sourceCache.getVisibleCoordinates());
+            //Use source with highest maxzoom
+            let selectedSource;
+            let sourceCache;
+            const layers = values(this.style._layers);
+            layers.forEach((layer) => {
+                if (layer.source && !layer.isHidden(this.transform.zoom)) {
+                    if (layer.source !== (sourceCache && sourceCache.id)) {
+                        sourceCache = this.style.sourceCaches[layer.source];
+                    }
+                    if (!selectedSource || (selectedSource.getSource().maxzoom < sourceCache.getSource().maxzoom)) {
+                        selectedSource = sourceCache;
+                    }
+                }
+            });
+            if (selectedSource) {
+                draw.debug(this, selectedSource, selectedSource.getVisibleCoordinates());
             }
         }
     }

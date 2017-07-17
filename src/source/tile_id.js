@@ -39,6 +39,10 @@ export class CanonicalTileID {
             .replace('{quadkey}', quadkey)
             .replace('{bbox-epsg-3857}', bbox);
     }
+
+    toString() {
+        return `${this.z}/${this.x}/${this.y}`;
+    }
 }
 
 export class UnwrappedTileID {
