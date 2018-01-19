@@ -419,6 +419,23 @@ class Tile {
             }
         }
     }
+
+    updateFeatureProperties(baseChangedProps, changedProps) {
+        if (!this.vtLayers) {
+            this.vtLayers = new vt.VectorTile(new Protobuf(this.rawTileData)).layers;
+        }
+
+        for (const i in this.buckets) {
+            const bucket = this.buckets[i];
+            const sourceLayer = bucket.layers[0]['source-layer'] || '';
+            const layer = this.vtLayers._geojsonTileLayer || this.vtLayers[sourceLayer];
+            if (!layer) return;
+
+            if (bucket.updateFeatureProperties) {
+                bucket.updateFeatureProperties(baseChangedProps, changedProps, layer);
+            }
+        }
+    }
 }
 
 module.exports = Tile;

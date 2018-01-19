@@ -76,6 +76,7 @@ class GeoJSONSource extends Evented implements Source {
     map: Map;
     workerID: number;
     _loaded: boolean;
+    changedProps: any;
 
     constructor(id: string, options: GeojsonSourceSpecification & { workerOptions?: any }, dispatcher: Dispatcher, eventedParent: Evented) {
         super();
@@ -91,6 +92,8 @@ class GeoJSONSource extends Evented implements Source {
         this.tileSize = 512;
         this.isTileClipped = true;
         this.reparseOverscaled = true;
+        this.changedProps = {};
+        this.baseChangedProps = {};
 
         this.dispatcher = dispatcher;
         this.setEventedParent(eventedParent);
@@ -241,6 +244,12 @@ class GeoJSONSource extends Evented implements Source {
 
     hasTransition() {
         return false;
+    }
+
+    setFeatureDataProperty(id: number | string, key: string, value: any) {
+        this.changedProps[id] = this.changedProps[id] || {};
+        this.changedProps[id][key] = value;
+        this.map._rerender();
     }
 }
 

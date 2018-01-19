@@ -152,6 +152,24 @@ class SourceExpressionBinder<T> implements Binder<T> {
         }
     }
 
+    updatePaintArray(start, length, feature) {
+        const paintArray = this.paintVertexArray;
+
+        const value = this.expression.evaluate({zoom: 0}, feature, true);
+
+        if (this.type === 'color') {
+            const color = packColor(value);
+            for (let i = start; i < length; i++) {
+                paintArray.emplace(i, color[0], color[1]);
+            }
+        } else {
+            for (let i = start; i < length; i++) {
+                paintArray.emplace(i, value);
+            }
+            this.statistics.max = Math.max(this.statistics.max, value);
+        }
+    }
+
     upload(context: Context) {
         if (this.paintVertexArray) {
             this.paintVertexBuffer = context.createVertexBuffer(this.paintVertexArray, this.paintVertexAttributes);
@@ -283,6 +301,8 @@ class ProgramConfiguration {
         this.cacheKey = '';
 
         this._buffers = [];
+        this._idMap = {};
+        this._end = 0;
     }
 
     static createDynamic<Layer: TypedStyleLayer>(layer: Layer, zoom: number, filterProperties: (string) => boolean) {
@@ -316,10 +336,55 @@ class ProgramConfiguration {
         return self;
     }
 
-    populatePaintArrays(length: number, feature: Feature) {
+    populatePaintArrays(length: number, feature: Feature, index) {
         for (const property in this.binders) {
             this.binders[property].populatePaintArray(length, feature);
         }
+        if (feature.id !== undefined && index !== undefined) {
+            // TODO possible overwrite
+            this._idMap[feature.id] = {
+                index: index,
+                start: this._end,
+                length: length
+            };
+        }
+        this._end = length;
+    }
+
+    updatePaintArrays(baseChangedProps, changedProps, vtLayer, layer) {
+        let dirty = false;
+        for (const id in changedProps) {
+            const pos = this._idMap[id];
+
+            if (pos) {
+                const feature = vtLayer.feature(pos.index);
+                const props = changedProps[id];
+                const base = baseChangedProps[id] = baseChangedProps[id] || {};
+
+                for (const key in props) {
+                    base[key] = props[key];
+                }
+                for (const key in base) {
+                    feature.properties[key] = base[key];
+                }
+
+                for (const property in this.binders) {
+
+                    if (property !== 'fill-color') continue;
+
+                    if (this.binders[property].updatePaintArray) {
+
+                        // TODO unserialize earlier
+                        const value = layer.paint.get(property);
+                        this.binders[property].expression = value.value;
+
+                        this.binders[property].updatePaintArray(pos.start, pos.length, feature);
+                        dirty = true;
+                    }
+                }
+            }
+        }
+        return dirty;
     }
 
     defines(): Array<string> {
@@ -377,9 +442,9 @@ class ProgramConfigurationSet<Layer: TypedStyleLayer> {
         }
     }
 
-    populatePaintArrays(length: number, feature: Feature) {
+    populatePaintArrays(length: number, feature: Feature, index) {
         for (const key in this.programConfigurations) {
-            this.programConfigurations[key].populatePaintArrays(length, feature);
+            this.programConfigurations[key].populatePaintArrays(length, feature, index);
         }
     }
 

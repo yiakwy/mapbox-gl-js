@@ -163,6 +163,17 @@ class SourceCache extends Evented {
             this._source.prepare();
         }
 
+        if (this._source.changedProps && Object.keys(this._source.changedProps).length) {
+
+            console.time('a');
+            for (const i in this._tiles) {
+                this._tiles[i].updateFeatureProperties(this._source.baseChangedProps, this._source.changedProps);
+            }
+
+            this._source.changedProps = {};
+            console.timeEnd('a');
+        }
+
         for (const i in this._tiles) {
             this._tiles[i].upload(context);
         }
@@ -246,6 +257,10 @@ class SourceCache extends Evented {
         this._setTileReloadTimer(id, tile);
         if (this.getSource().type === 'raster-dem' && tile.dem) this._backfillDEM(tile);
         this._source.fire('data', {dataType: 'source', tile: tile, coord: tile.tileID});
+
+        if (this._source.baseChangedProps) {
+            tile.updateFeatureProperties({}, this._source.baseChangedProps);
+        }
 
         // HACK this is necessary to fix https://github.com/mapbox/mapbox-gl-js/issues/2986
         if (this.map) this.map.painter.tileExtentVAO.vao = null;
@@ -571,6 +586,9 @@ class SourceCache extends Evented {
 
         tile = this._cache.getAndRemove((tileID.key: any));
         if (tile) {
+            if (this._source.baseChangedProps) {
+                tile.updateFeatureProperties({}, this._source.baseChangedProps);
+            }
             if (this._cacheTimers[tileID.key]) {
                 clearTimeout(this._cacheTimers[tileID.key]);
                 delete this._cacheTimers[tileID.key];
