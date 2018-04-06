@@ -288,7 +288,7 @@ class Tile {
         if (!layer) return;
 
         const filter = featureFilter(params && params.filter);
-        const coord = { z: this.tileID.overscaledZ, x: this.tileID.canonical.x, y: this.tileID.canonical.y };
+        const coord = { z: this.tileID.canonical.z, x: this.tileID.canonical.x, y: this.tileID.canonical.y };
 
         for (let i = 0; i < layer.length; i++) {
             const feature = layer.feature(i);
