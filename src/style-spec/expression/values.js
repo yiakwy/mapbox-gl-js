@@ -97,4 +97,17 @@ export function typeOf(value: Value): Type {
     }
 }
 
+export function toString(value: Value) {
+    const type = typeof value;
+    if (value === null) {
+        return '';
+    } else if (type === 'string' || type === 'number' || type === 'boolean') {
+        return String(value);
+    } else if (value instanceof Color) {
+        return value.toString();
+    } else {
+        return JSON.stringify(value);
+    }
+}
+
 export { Color, Collator };

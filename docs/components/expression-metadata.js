@@ -163,6 +163,10 @@ const types = {
         type: 'OutputType',
         parameters: [{repeat: ['OutputType']}]
     }],
+    concat: [{
+        type: 'string',
+        parameters: [{repeat: ['value']}]
+    }],
     step: [{
         type: 'OutputType',
         parameters: [
