@@ -574,8 +574,6 @@ export class DataDrivenProperty<T> implements Property<T, PossiblyEvaluatedPrope
             return value.evaluate(parameters, feature, featureState);
         }
     }
-
-    getPossibleOutputs() { return []; }
 }
 
 /**
