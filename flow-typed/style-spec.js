@@ -158,7 +158,7 @@ declare type FillLayerSpecification = {|
         "fill-outline-color"?: DataDrivenPropertyValueSpecification<ColorSpecification>,
         "fill-translate"?: PropertyValueSpecification<[number, number]>,
         "fill-translate-anchor"?: PropertyValueSpecification<"map" | "viewport">,
-        "fill-pattern"?: PropertyValueSpecification<string>
+        "fill-pattern"?: DataDrivenPropertyValueSpecification<string>
     |}
 |}
 
