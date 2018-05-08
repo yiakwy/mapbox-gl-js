@@ -3434,7 +3434,9 @@
           "ios": "2.0.0",
           "macos": "0.1.0"
         },
-        "data-driven styling": {}
+        "data-driven styling": {
+          "js": "0.46.0"
+        }
       },
       "expression": {
         "interpolated": false,
@@ -3940,7 +3942,9 @@
           "ios": "2.0.0",
           "macos": "0.1.0"
         },
-        "data-driven styling": {}
+        "data-driven styling": {
+          "js": "0.46.0"
+        }
       },
       "expression": {
         "interpolated": false,
