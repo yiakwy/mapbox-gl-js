@@ -70,8 +70,8 @@ function drawLineTile(program, painter, tile, bucket, layer, coord, programConfi
                                                  crossfade);
     if (programChanged || tileRatioChanged) {
         if (dasharray) {
-            posA = painter.lineAtlas.getDash(dasharray.from, layer.layout.get('line-cap') === 'round');
-            posB = painter.lineAtlas.getDash(dasharray.to, layer.layout.get('line-cap') === 'round');
+            posA = painter.lineAtlas.getDash(dasharray[dasharray.from], layer.layout.get('line-cap') === 'round');
+            posB = painter.lineAtlas.getDash(dasharray.mid, layer.layout.get('line-cap') === 'round');
 
             const widthA = posA.width * dasharray.fromScale;
             const widthB = posB.width * dasharray.toScale;

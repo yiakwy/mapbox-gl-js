@@ -16,8 +16,8 @@ import type {CrossFaded} from '../style/cross_faded';
  */
 export const isPatternMissing = function(image: ?CrossFaded<string>, painter: Painter): boolean {
     if (!image) return false;
-    const imagePosA = painter.imageManager.getPattern(image.from);
-    const imagePosB = painter.imageManager.getPattern(image.to);
+    const imagePosA = painter.imageManager.getPattern(image[image.from]);
+    const imagePosB = painter.imageManager.getPattern(image.mid);
     return !imagePosA || !imagePosB;
 };
 
@@ -25,8 +25,8 @@ export const prepare = function (image: CrossFaded<string>, painter: Painter, pr
     const context = painter.context;
     const gl = context.gl;
 
-    const imagePosA = painter.imageManager.getPattern(image.from);
-    const imagePosB = painter.imageManager.getPattern(image.to);
+    const imagePosA = painter.imageManager.getPattern(image[image.from]);
+    const imagePosB = painter.imageManager.getPattern(image.mid);
     assert(imagePosA && imagePosB);
 
     gl.uniform1i(program.uniforms.u_image, 0);
