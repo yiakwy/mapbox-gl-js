@@ -23,28 +23,17 @@ export default function drawLine(painter: Painter, sourceCache: SourceCache, lay
     context.setDepthMode(painter.depthModeForSublayer(0, DepthMode.ReadOnly));
     context.setColorMode(painter.colorModeForRenderPass());
 
-    const linePattern = layer.paint.get('line-pattern');
+    const linePattern = layer.paint.get('line-pattern').constantOr((1: any));
     const programId =
         layer.paint.get('line-dasharray') ? 'lineSDF' :
-        linePattern && !(linePattern.value.kind === "constant" && linePattern.value.value === undefined) ? 'linePattern' :
+        linePattern ? 'linePattern' :
         layer.paint.get('line-gradient') ? 'lineGradient' : 'line';
 
     let prevTileZoom;
     let firstTile = true;
     for (const coord of coords) {
         const tile = sourceCache.getTile(coord);
-
-        const pattern = linePattern.constantOr((1: any));
-        if (pattern && !tile.imageAtlas) continue;
-        if (pattern && tile.imageAtlas) {
-            // pattern is set, but the icon atlas hasn't been populated yet
-            if (!Object.keys(tile.imageAtlas.patternPositions).length) continue;
-            if (pattern.to && pattern.from) {
-                const imagePosFrom = tile.imageAtlas.patternPositions[pattern.from],
-                    imagePosTo = tile.imageAtlas.patternPositions[pattern.to];
-                if (!imagePosFrom || !imagePosTo) continue;
-            }
-        }
+        if (linePattern && !tile.patternsLoaded()) continue;
 
         const bucket: ?LineBucket = (tile.getBucket(layer): any);
         if (!bucket) continue;

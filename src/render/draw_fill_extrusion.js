@@ -101,19 +101,8 @@ function drawExtrusion(painter, source, layer, tile, coord, bucket, first) {
     const context = painter.context;
     const gl = context.gl;
 
-    const patternProperty = layer.paint.get('fill-extrusion-pattern');
-    const pattern = patternProperty.constantOr((1: any));
-    if (pattern && !tile.imageAtlas) return;
-    if (pattern && tile.imageAtlas) {
-        // pattern is set, but the icon atlas hasn't been populated yet
-        if (!Object.keys(tile.imageAtlas.patternPositions).length) return;
-        if (pattern.to && pattern.from) {
-            const imagePosFrom = tile.imageAtlas.patternPositions[pattern.from],
-                imagePosTo = tile.imageAtlas.patternPositions[pattern.to];
-            if (!imagePosFrom || !imagePosTo) return;
-        }
-
-    }
+    const pattern = layer.paint.get('fill-extrusion-pattern').constantOr((1: any));
+    if (pattern && !tile.patternsLoaded()) return;
 
     const prevProgram = painter.context.program.get();
     const programConfiguration = bucket.programConfigurations.get(layer.id);

@@ -56,18 +56,7 @@ function drawFillTiles(painter, sourceCache, layer, coords, drawFn) {
     let firstTile = true;
     for (const coord of coords) {
         const tile = sourceCache.getTile(coord);
-        const pattern = layer.paint.get('fill-pattern').constantOr((1: any));
-        if (pattern && !tile.imageAtlas) continue;
-        if (pattern && tile.imageAtlas) {
-            // pattern is set, but the icon atlas hasn't been populated yet
-            if (!Object.keys(tile.imageAtlas.patternPositions).length) continue;
-            if (pattern.to && pattern.from) {
-                const imagePosFrom = tile.imageAtlas.patternPositions[pattern.from],
-                    imagePosTo = tile.imageAtlas.patternPositions[pattern.to];
-                if (!imagePosFrom || !imagePosTo) continue;
-            }
-
-        }
+        if (layer.paint.get('fill-pattern').constantOr((1: any)) && !tile.patternsLoaded()) continue;
 
         const bucket: ?FillBucket = (tile.getBucket(layer): any);
         if (!bucket) continue;
@@ -97,7 +86,7 @@ function drawStrokeTile(painter, sourceCache, layer, tile, coord, bucket, firstT
     const gl = painter.context.gl;
     const programConfiguration = bucket.programConfigurations.get(layer.id);
     const patternProperty = layer.paint.get('fill-pattern');
-    const pattern = layer.getPaintProperty('fill-outline-color') ? null : patternProperty && patternProperty.constantOr((1: any));
+    const pattern = layer.getPaintProperty('fill-outline-color') ? null : patternProperty.constantOr((1: any));
     const program = setFillProgram('fillOutline', !!pattern, painter, programConfiguration, layer, tile, coord, firstTile);
     gl.uniform2f(program.uniforms.u_world, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
