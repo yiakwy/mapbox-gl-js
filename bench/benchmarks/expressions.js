@@ -2,7 +2,7 @@
 
 import Benchmark from '../lib/benchmark';
 
-import accessToken from '../lib/access_token';
+import { accessToken } from '../lib/parameters';
 import spec from '../../src/style-spec/reference/latest';
 import convertFunction from '../../src/style-spec/function/convert';
 import { isFunction, createFunction } from '../../src/style-spec/function';

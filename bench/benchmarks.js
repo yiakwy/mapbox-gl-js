@@ -1,7 +1,7 @@
 // @flow
 
 import mapboxgl from '../src';
-import accessToken from './lib/access_token';
+import { accessToken } from './lib/parameters';
 mapboxgl.accessToken = accessToken;
 
 window.mapboxglVersions = window.mapboxglVersions || [];

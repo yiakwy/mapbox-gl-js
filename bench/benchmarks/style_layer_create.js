@@ -1,6 +1,6 @@
 
 import Benchmark from '../lib/benchmark';
-import accessToken from '../lib/access_token';
+import { accessToken } from '../lib/parameters';
 import createStyleLayer from '../../src/style/create_style_layer';
 import deref from '../../src/style-spec/deref';
 import { normalizeStyleURL } from '../../src/util/mapbox';

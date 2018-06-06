@@ -6,9 +6,17 @@ const accessToken = (
     localStorage.getItem('accessToken')
 );
 
-localStorage.setItem('accessToken', accessToken);
+const styleURL = (
+    process.env.MapboxStyleURL ||
+    process.env.MAPBOX_STYLE_URL ||
+    getURLParameter('style_url') ||
+    localStorage.getItem('styleURL')
+);
 
-export default accessToken;
+localStorage.setItem('accessToken', accessToken);
+localStorage.setItem('styleURL', styleURL);
+
+export { accessToken, styleURL };
 
 function getURLParameter(name) {
     const regexp = new RegExp(`[?&]${name}=([^&#]*)`, 'i');
