@@ -37,7 +37,8 @@ export default class Layout extends Benchmark {
     }
 
     fetchStyle(): Promise<StyleSpecification> {
-        return fetch(normalizeStyleURL(`mapbox://styles/mapbox/streets-v9`))
+        console.log('this and styleURL', this, this.styleURL);
+        return fetch(normalizeStyleURL(this.styleURL))
             .then(response => response.json());
     }
 

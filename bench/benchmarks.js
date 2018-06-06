@@ -12,7 +12,7 @@ window.mapboxglVersions.push(version);
 
 function register(Benchmark) {
     window.mapboxglBenchmarks[Benchmark.name] = window.mapboxglBenchmarks[Benchmark.name] || {};
-    window.mapboxglBenchmarks[Benchmark.name][version] = new Benchmark();
+    window.mapboxglBenchmarks[Benchmark.name][version] = new Benchmark(`mapbox://styles/mapbox/streets-v9`);
 }
 
 import Layout from './benchmarks/layout';
@@ -54,4 +54,3 @@ setTimeout(() => {
 }, 0);
 
 export default mapboxgl;
-

@@ -14,7 +14,7 @@ export default class QueryBox extends Benchmark {
                 width,
                 height,
                 center: [-77.032194, 38.912753],
-                style: 'mapbox://styles/mapbox/streets-v9'
+                style: this.styleURL
             });
         })).then(maps => { this.maps = maps; });
     }
