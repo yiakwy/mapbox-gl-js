@@ -8,6 +8,7 @@ const plugins = () => basePlugins().concat(
         'process.env.MapboxAccessToken': JSON.stringify(process.env.MapboxAccessToken),
         'process.env.MAPBOX_STYLE_URL': JSON.stringify(process.env.MAPBOX_STYLE_URL),
         'process.env.MapboxStyleURL': JSON.stringify(process.env.MapboxStyleURL),
+        'process.env.STYLE_BENCHMARK': JSON.stringify(process.env.STYLE_BENCHMARK),
         // should we rewrite this as 'production' if BUILD==='production'?
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     })

@@ -415,7 +415,8 @@ class BenchmarksTable extends React.Component {
 const versions = window.mapboxglVersions;
 const benchmarks = [];
 const filter = window.location.hash.substr(1);
-
+// console.log('mapboxglVersions', window.mapboxglVersions);
+// console.log('mapboxglBenchmarks', window.mapboxglBenchmarks);
 let finished = false;
 let promise = Promise.resolve();
 
@@ -427,14 +428,19 @@ for (const name in window.mapboxglBenchmarks) {
     benchmarks.push(benchmark);
 
     for (const ver in window.mapboxglBenchmarks[name]) {
+      // console.log('ver', ver);
         const version = {
             name: ver,
             status: 'waiting',
             logs: [],
             samples: [],
+            style: {},
             summary: {}
         };
 
+        // console.log('benchmark', benchmark);
+        // console.log('version', version);
+        // for each style, push a new version with the style url
         benchmark.versions.push(version);
 
         promise = promise.then(() => {
@@ -472,4 +478,3 @@ function update() {
         document.getElementById('benchmarks')
     );
 }
-

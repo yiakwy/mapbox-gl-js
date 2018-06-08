@@ -68,7 +68,6 @@ class Benchmark {
         this._elapsed = 0;
         this._iterationsPerMeasurement = 1;
         this._start = performance.now();
-
         const bench = this.bench();
         if (bench instanceof Promise) {
             return bench.then(this._measureAsync);

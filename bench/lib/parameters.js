@@ -6,12 +6,16 @@ const accessToken = (
     localStorage.getItem('accessToken')
 );
 
-const styleURL = (
+let styleURL = (
     process.env.MapboxStyleURL ||
     process.env.MAPBOX_STYLE_URL ||
     getURLParameter('style_url') ||
     localStorage.getItem('styleURL')
 );
+
+// local storage coerces a null value to a string so if that happens, fall back to a default style url
+styleURL = !styleURL || styleURL === 'null' ? ['mapbox://styles/mapbox/streets-v10'] : styleURL.split(',');
+console.log('styleUrl', styleURL)
 
 localStorage.setItem('accessToken', accessToken);
 localStorage.setItem('styleURL', styleURL);

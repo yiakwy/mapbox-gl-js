@@ -25,6 +25,9 @@ export default class Layout extends Benchmark {
 
     tileIDs(): Array<OverscaledTileID> {
         return [
+            // instead of averaging these out, run bench against each zoom level
+            // need to determine comprehensive set of zooms and locations
+            // each zoom level should run against a few locations and report its findings individually
             new OverscaledTileID(12, 0, 12, 655, 1583),
             new OverscaledTileID(8, 0, 8, 40, 98),
             new OverscaledTileID(4, 0, 4, 3, 6),
@@ -100,7 +103,7 @@ export default class Layout extends Benchmark {
         };
 
         let promise: Promise<void> = Promise.resolve();
-
+`       `
         for (const {tileID, buffer} of this.tiles) {
             promise = promise.then(() => {
                 const workerTile = new WorkerTile({
