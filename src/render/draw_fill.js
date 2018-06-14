@@ -25,7 +25,6 @@ function drawFill(painter: Painter, sourceCache: SourceCache, layer: FillStyleLa
         return;
     }
 
-    const context = painter.context;
     const colorMode = painter.colorModeForRenderPass();
 
     const pass = (!layer.paint.get('fill-pattern') &&

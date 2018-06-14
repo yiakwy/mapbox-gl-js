@@ -9,10 +9,7 @@ import {
     UniformMatrix4fv
 } from '../uniform_binding';
 
-import glMatrix from '@mapbox/gl-matrix';
-const mat3 = glMatrix.mat3;
-const vec3 = glMatrix.vec3;
-const mat4 = glMatrix.mat4;
+import { mat3, vec3, mat4 } from 'gl-matrix';
 import { extend } from '../../util/util';
 
 import type Context from '../../gl/context';

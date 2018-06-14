@@ -4,6 +4,7 @@ import DepthMode from '../gl/depth_mode';
 import Texture from './texture';
 import {
     lineUniformValues,
+    lineGradientUniformValues,
     linePatternUniformValues,
     lineSDFUniformValues
 } from './program/line_program';

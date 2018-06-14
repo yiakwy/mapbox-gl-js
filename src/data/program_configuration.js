@@ -116,7 +116,7 @@ class ConstantBinder<T> implements Binder<T> {
         uniform.set(currentValue.constantOr(this.value));
     }
 
-    getBinding(context: Context, location: WebGLUniformLocation): $Subtype<Uniform<*>> {
+    getBinding(context: Context, location: WebGLUniformLocation): $Subtype<Uniform<any>> {
         return (this.type === 'color') ?
             new UniformColor(context, location) :
             new Uniform1f(context, location);
@@ -345,7 +345,7 @@ class CompositeExpressionBinder<T> implements Binder<T> {
  *
  * @private
  */
-class ProgramConfiguration {
+export default class ProgramConfiguration {
     binders: Array<Binder<any>>;
     cacheKey: string;
     layoutAttributes: Array<StructArrayMember>;
@@ -400,9 +400,9 @@ class ProgramConfiguration {
         return self;
     }
 
-    populatePaintArrays(length: number, feature: Feature) {
+    populatePaintArrays(newLength: number, feature: Feature, index: number) {
         for (let i = 0; i < this.binderLen; i++) {
-            this.binders[i].populatePaintArray(length, feature);
+            this.binders[i].populatePaintArray(newLength, feature);
         }
         if (feature.id) {
             const featureId = String(feature.id);
@@ -427,12 +427,12 @@ class ProgramConfiguration {
             for (const pos of posArray) {
                 const feature = vtLayer.feature(pos.index);
 
-                for (const property in this.binders) {
-                    const binder = this.binders[property];
+                for (let i = 0; i < this.binderLen; i++) {
+                    const binder = this.binders[i];
                     if (binder instanceof ConstantBinder) continue;
                     if ((binder: any).expression.isStateDependent === true) {
                         //AHM: Remove after https://github.com/mapbox/mapbox-gl-js/issues/6255
-                        const value = layer.paint.get(property);
+                        const value = layer.paint.get(binder.property);
                         (binder: any).expression = value.value;
                         binder.updatePaintArray(pos.start, pos.end, feature, featureState);
                         dirty = true;
@@ -464,10 +464,10 @@ class ProgramConfiguration {
         return result;
     }
 
-    setUniforms<Properties: Object>(context: Context, uniformBindings: UniformBindings, properties: PossiblyEvaluated<Properties>, globals: GlobalProperties, i: number) {
+    setUniforms<Properties: Object>(context: Context, uniformBindings: UniformBindings, properties: PossiblyEvaluated<Properties>, globals: GlobalProperties) {
         // Uniform state bindings are owned by the Program, but we set them
         // from within the ProgramConfiguraton's binder members.
-        for (; i < this.binderLen; i++) {
+        for (let i = 0; i < this.binderLen; i++) {
             this.binders[i].setUniforms(context, uniformBindings[this.binders[i].uniformName], globals, properties.get(this.binders[i].property));
         }
     }

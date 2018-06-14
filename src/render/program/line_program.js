@@ -125,7 +125,7 @@ const lineGradientUniformValues = (
     return extend(lineUniformValues(painter, tile, layer), {
         'u_image': 0
     });
-}
+};
 
 const linePatternUniformValues = (
     painter: Painter,
