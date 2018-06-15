@@ -23,6 +23,7 @@ export type PaintProps = {|
     "fill-extrusion-pattern": CrossFadedProperty<string>,
     "fill-extrusion-height": DataDrivenProperty<number>,
     "fill-extrusion-base": DataDrivenProperty<number>,
+    "fill-extrusion-vertical-gradient": DataConstantProperty<boolean>,
 |};
 
 const paint: Properties<PaintProps> = new Properties({
@@ -33,6 +34,7 @@ const paint: Properties<PaintProps> = new Properties({
     "fill-extrusion-pattern": new CrossFadedProperty(styleSpec["paint_fill-extrusion"]["fill-extrusion-pattern"]),
     "fill-extrusion-height": new DataDrivenProperty(styleSpec["paint_fill-extrusion"]["fill-extrusion-height"]),
     "fill-extrusion-base": new DataDrivenProperty(styleSpec["paint_fill-extrusion"]["fill-extrusion-base"]),
+    "fill-extrusion-vertical-gradient": new DataConstantProperty(styleSpec["paint_fill-extrusion"]["fill-extrusion-vertical-gradient"]),
 });
 
 export default { paint };

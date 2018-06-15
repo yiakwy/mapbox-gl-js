@@ -116,6 +116,8 @@ function drawExtrusion(painter, source, layer, tile, coord, bucket, first) {
         programConfiguration.setUniforms(context, program, layer.paint, {zoom: painter.transform.zoom});
     }
 
+    gl.uniform1f(program.uniforms.u_vertical_gradient, +layer.paint.get('fill-extrusion-vertical-gradient'));
+
     if (image) {
         if (isPatternMissing(image, painter)) return;
         preparePattern(image, painter, program);
