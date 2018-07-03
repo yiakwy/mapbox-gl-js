@@ -1,3 +1,12 @@
+## 0.47.0
+
+### ⚠️ Breaking changes
+
+### ✨ Features and improvements
+* Add `Map#fitScreenCoordinates`: fits viewport to two points, similar to `Map#fitBounds` but uses screen coordinates and supports non-zero map bearings. ([#6894](https://github.com/mapbox/mapbox-gl-js/pull/6894))
+
+### 🐛 Bug fixes
+
 ## 0.46.0
 
 ### ⚠️ Breaking changes
