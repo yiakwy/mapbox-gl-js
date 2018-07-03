@@ -4,7 +4,7 @@ import LngLat from './lng_lat';
 
 import Point from '@mapbox/point-geometry';
 import Coordinate from './coordinate';
-import { wrap, clamp } from '../util/util';
+import { wrap, clamp, warnOnce } from '../util/util';
 import {number as interpolate} from '../style-spec/util/interpolate';
 import tileCover from '../util/tile_cover';
 import { CanonicalTileID, UnwrappedTileID } from '../source/tile_id';
@@ -295,6 +295,12 @@ class Transform {
      * @returns {number} pixel coordinate
      */
     latY(lat: number) {
+        const validLatitude = 85.05113;
+        if (lat > validLatitude || lat < validLatitude * -1) {
+          const input = lat;
+          lat = clamp(lat, validLatitude * -1, validLatitude);
+          warnOnce(`Latitudes north of ${validLatitude}°N and south of -${validLatitude}°S are invalid in Web Mercator projections. Clamping latitude ${input} to ${lat}.`);
+        }
         const y = 180 / Math.PI * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
         return (180 - y) * this.worldSize / 360;
     }
