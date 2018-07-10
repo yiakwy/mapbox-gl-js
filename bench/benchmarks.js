@@ -44,15 +44,15 @@ import FilterCreate from './benchmarks/filter_create';
 import FilterEvaluate from './benchmarks/filter_evaluate';
 
 register(Layout);
-register(LayoutDDS);
 register(Paint);
 register(Validate);
 register(StyleLayerCreate);
 register(QueryPoint);
 register(QueryBox);
-ExpressionBenchmarks.forEach(register);
 
 if (!isStyleBench) {
+    register(LayoutDDS);
+    ExpressionBenchmarks.forEach(register);
     register(PaintStates);
     LayerBenchmarks.forEach(register);
     register(Load);
