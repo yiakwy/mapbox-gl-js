@@ -2,6 +2,10 @@
 
 import mapboxgl from '../src';
 import { accessToken, styleURL } from './lib/parameters';
+import { tiles, locations } from './lib/style_locations';
+
+console.log('tiles', tiles);
+console.log('locations', locations);
 mapboxgl.accessToken = accessToken;
 
 window.mapboxglVersions = window.mapboxglVersions || [];
@@ -21,7 +25,25 @@ function register(Benchmark) {
       if (!window.mapboxglBenchmarks[Benchmark.name]) {
         window.mapboxglBenchmarks[Benchmark.name] = {};
       }
-      window.mapboxglBenchmarks[Benchmark.name][style] = new Benchmark(style);
+
+      switch (Benchmark.name) {
+        // case 'Layout':
+        //   // tiles.forEach(tile => benchmarks.push({benchmark, tile: JSON.parse(JSON.stringify(tile))}));
+        //   break;
+        case 'Paint':
+        case 'QueryBox':
+        case 'QueryPoint':
+          locations.forEach(location => {
+            if (!window.mapboxglBenchmarks[Benchmark.name][location.description.toLowerCase().split(' ').join('_')]) {
+              window.mapboxglBenchmarks[Benchmark.name][location.description.toLowerCase().split(' ').join('_')] = {};
+            }
+            window.mapboxglBenchmarks[Benchmark.name][location.description.toLowerCase().split(' ').join('_')][style] = new Benchmark(style);
+          });
+          break;
+        default:
+          window.mapboxglBenchmarks[Benchmark.name][style] = new Benchmark(style);
+      }
+
     });
   } else {
     window.mapboxglBenchmarks[Benchmark.name] = window.mapboxglBenchmarks[Benchmark.name] || {};

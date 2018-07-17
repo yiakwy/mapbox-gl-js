@@ -59,6 +59,7 @@ export default class Layout extends Benchmark {
     }
 
     setup(): Promise<void> {
+        console.log('setup');
         return this.fetchStyle()
             .then((styleJSON) => {
                 this.layerIndex = new StyleLayerIndex(deref(styleJSON.layers));
@@ -89,7 +90,7 @@ export default class Layout extends Benchmark {
 
     bench(getGlyphs: Function = (params, callback) => callback(null, this.glyphs[JSON.stringify(params)]),
           getImages: Function = (params, callback) => callback(null, this.icons[JSON.stringify(params)])) {
-
+        console.log('bench');
         const actor = {
             send(action, params, callback) {
                 setTimeout(() => {
@@ -103,7 +104,7 @@ export default class Layout extends Benchmark {
         };
 
         let promise: Promise<void> = Promise.resolve();
-`       `
+
         for (const {tileID, buffer} of this.tiles) {
             promise = promise.then(() => {
                 const workerTile = new WorkerTile({

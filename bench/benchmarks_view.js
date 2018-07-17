@@ -3,9 +3,14 @@ import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import Axis from './lib/axis';
 import { summaryStatistics, regression, kde, probabilitiesOfSuperiority } from './lib/statistics';
+import { tiles, locations } from './lib/style_locations';
+
+// console.log('tiles', tiles);
+// console.log('locations', locations);
 
 const versionColor = d3.scaleOrdinal(['#1b9e77', '#7570b3', '#d95f02']);
 const formatSample = d3.format(".3r");
+const isStyleBench = process.env.STYLE_BENCHMARK;
 
 class StatisticsPlot extends React.Component {
     constructor(props) {
@@ -386,7 +391,7 @@ class BenchmarksTable extends React.Component {
                     this.props.finished ?
                         <span>Finished <button className='button fr icon share' onClick={this.share}>Share</button></span> :
                         <span>Running</span>}</h1>
-                {this.props.benchmarks.map(benchmark => <BenchmarkRow key={benchmark.name} {...benchmark}/>)}
+                {this.props.benchmarks.map((benchmark, i) => <BenchmarkRow key={`${benchmark.benchmark.name}-${i}`} {...benchmark.benchmark}/>)}
             </div>
         );
     }
@@ -415,8 +420,6 @@ class BenchmarksTable extends React.Component {
 const versions = window.mapboxglVersions;
 const benchmarks = [];
 const filter = window.location.hash.substr(1);
-// console.log('mapboxglVersions', window.mapboxglVersions);
-// console.log('mapboxglBenchmarks', window.mapboxglBenchmarks);
 let finished = false;
 let promise = Promise.resolve();
 
@@ -425,46 +428,64 @@ for (const name in window.mapboxglBenchmarks) {
         continue;
 
     const benchmark = { name, versions: [] };
-    benchmarks.push(benchmark);
 
-    for (const ver in window.mapboxglBenchmarks[name]) {
-      // console.log('ver', ver);
+    if (isStyleBench) {
+      switch (name) {
+        case 'Layout':
+          tiles.forEach(tile => benchmarks.push({benchmark, tile: JSON.parse(JSON.stringify(tile))}));
+          break;
+        case 'Paint':
+        case 'QueryBox':
+        case 'QueryPoint':
+          locations.forEach(location => benchmarks.push({benchmark, location}));
+          break;
+      }
+    } else {
+      benchmarks.push(benchmark);
+    }
+    console.log('benchmarks', benchmarks);
+    console.log('window.mapboxglBenchmarks[name]', window.mapboxglBenchmarks[name]);
+    debugger;
+
+    for (const zoomLevel in window.mapboxglBenchmarks[name]) {
+      console.log('zoomLevel', window.mapboxglBenchmarks[name][zoomLevel]);
+      for (const ver in window.mapboxglBenchmarks[name][zoomLevel]) {
         const version = {
-            name: ver,
-            status: 'waiting',
-            logs: [],
-            samples: [],
-            style: {},
-            summary: {}
+          name: ver,
+          status: 'waiting',
+          logs: [],
+          samples: [],
+          style: {},
+          summary: {}
         };
 
-        // console.log('benchmark', benchmark);
-        // console.log('version', version);
         // for each style, push a new version with the style url
         benchmark.versions.push(version);
 
         promise = promise.then(() => {
-            version.status = 'running';
-            update();
+          version.status = 'running';
+          update();
 
-            return window.mapboxglBenchmarks[name][ver].run()
-                .then(measurements => {
-                    // scale measurements down by iteration count, so that
-                    // they represent (average) time for a single iteration
-                    const samples = measurements.map(({time, iterations}) => time / iterations);
-                    version.status = 'ended';
-                    version.samples = samples;
-                    version.summary = summaryStatistics(samples);
-                    version.regression = regression(measurements);
-                    update();
-                })
-                .catch(error => {
-                    version.status = 'errored';
-                    version.error = error;
-                    update();
-                });
+          return zoomLevel[ver].run()
+          .then(measurements => {
+            // scale measurements down by iteration count, so that
+            // they represent (average) time for a single iteration
+            const samples = measurements.map(({time, iterations}) => time / iterations);
+            version.status = 'ended';
+            version.samples = samples;
+            version.summary = summaryStatistics(samples);
+            version.regression = regression(measurements);
+            update();
+          })
+          .catch(error => {
+            version.status = 'errored';
+            version.error = error;
+            update();
+          });
         });
+      }
     }
+    console.log('styleBenchmarks', benchmarks);
 }
 
 promise = promise.then(() => {

@@ -50,6 +50,7 @@ class Benchmark {
      * times, and then executing `teardown`. Yields an array of execution times.
      */
     run(): Promise<?Array<Measurement>> {
+        console.log('run', this);
         return Promise.resolve(this.setup())
             .then(() => this._begin())
             .catch(e => {
