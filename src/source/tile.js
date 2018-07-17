@@ -176,8 +176,7 @@ class Tile {
         this.queryPadding = 0;
         for (const id in this.buckets) {
             const bucket = this.buckets[id];
-            const index = bucket.layerIds.indexOf(id);
-            this.queryPadding = Math.max(this.queryPadding, painter.style.getLayer(bucket.layerIds[index]).queryRadius(bucket));
+            this.queryPadding = Math.max(this.queryPadding, painter.style.getLayer(id).queryRadius(bucket));
         }
 
         if (data.iconAtlasImage) {
@@ -435,8 +434,7 @@ class Tile {
 
             bucket.update(sourceLayerStates, sourceLayer);
             if (painter && painter.style) {
-                const index = bucket.layerIds.indexOf(id);
-                this.queryPadding = Math.max(this.queryPadding, painter.style.getLayer(bucket.layerIds[index]).queryRadius(bucket));
+                this.queryPadding = Math.max(this.queryPadding, painter.style.getLayer(id).queryRadius(bucket));
             }
         }
     }
