@@ -107,6 +107,38 @@ class Context {
 
     }
 
+    restore() {
+        if (this.extVertexArrayObject) {
+            this.bindVertexArrayOES.restore();
+        } else {
+            this.bindVertexBuffer.restore();
+            this.bindElementBuffer.restore();
+        }
+        this.clearColor.restore();
+        this.clearDepth.restore();
+        this.clearStencil.restore();
+        this.colorMask.restore();
+        this.depthMask.restore();
+        this.stencilMask.restore();
+        this.stencilFunc.restore();
+        this.stencilOp.restore();
+        this.stencilTest.restore();
+        this.depthRange.restore();
+        this.depthTest.restore();
+        this.depthFunc.restore();
+        this.blend.restore();
+        this.blendFunc.restore();
+        this.blendColor.restore();
+        this.program.restore();
+        this.activeTexture.restore();
+        this.viewport.restore();
+        this.bindFramebuffer.restore();
+        this.bindRenderbuffer.restore();
+        this.bindTexture.restore();
+        this.pixelStoreUnpack.restore();
+        this.pixelStoreUnpackPremultiplyAlpha.restore();
+    }
+
     createIndexBuffer(array: TriangleIndexArray | LineIndexArray, dynamicDraw?: boolean) {
         return new IndexBuffer(this, array, dynamicDraw);
     }

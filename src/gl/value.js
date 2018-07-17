@@ -20,6 +20,7 @@ export interface Value<T> {
     current: T;
     get(): T;
     set(value: T): void;
+    restore(): void;
 }
 
 export class ClearColor implements Value<Color> {
@@ -40,6 +41,10 @@ export class ClearColor implements Value<Color> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.clearColor(this.current.r, this.current.g, this.current.b, this.current.a);
+    }
 }
 
 export class ClearDepth implements Value<number> {
@@ -59,6 +64,10 @@ export class ClearDepth implements Value<number> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.clearDepth(this.current);
+    }
 }
 
 export class ClearStencil implements Value<number> {
@@ -77,6 +86,10 @@ export class ClearStencil implements Value<number> {
             this.context.gl.clearStencil(v);
             this.current = v;
         }
+    }
+
+    restore() {
+        this.context.gl.clearStencil(this.current);
     }
 }
 
@@ -98,6 +111,10 @@ export class ColorMask implements Value<ColorMaskType> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.colorMask(this.current[0], this.current[1], this.current[2], this.current[3]);
+    }
 }
 
 export class DepthMask implements Value<DepthMaskType> {
@@ -117,6 +134,10 @@ export class DepthMask implements Value<DepthMaskType> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.depthMask(this.current);
+    }
 }
 
 export class StencilMask implements Value<number> {
@@ -135,6 +156,10 @@ export class StencilMask implements Value<number> {
             this.context.gl.stencilMask(v);
             this.current = v;
         }
+    }
+
+    restore() {
+        this.context.gl.stencilMask(this.current);
     }
 }
 
@@ -160,6 +185,10 @@ export class StencilFunc implements Value<StencilFuncType> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.stencilFunc(this.current.func, this.current.ref, this.current.mask);
+    }
 }
 
 export class StencilOp implements Value<StencilOpType> {
@@ -180,6 +209,10 @@ export class StencilOp implements Value<StencilOpType> {
             this.context.gl.stencilOp(v[0], v[1], v[2]);
             this.current = v;
         }
+    }
+
+    restore() {
+        this.context.gl.stencilOp(this.current[0], this.current[1], this.current[2]);
     }
 }
 
@@ -205,6 +238,15 @@ export class StencilTest implements Value<boolean> {
             this.current = v;
         }
     }
+
+    restore() {
+        const gl = this.context.gl;
+        if (this.current) {
+            gl.enable(gl.STENCIL_TEST);
+        } else {
+            gl.disable(gl.STENCIL_TEST);
+        }
+    }
 }
 
 export class DepthRange implements Value<DepthRangeType> {
@@ -224,6 +266,10 @@ export class DepthRange implements Value<DepthRangeType> {
             this.context.gl.depthRange(v[0], v[1]);
             this.current = v;
         }
+    }
+
+    restore() {
+        this.context.gl.depthRange(this.current[0], this.current[1]);
     }
 }
 
@@ -249,6 +295,15 @@ export class DepthTest implements Value<boolean> {
             this.current = v;
         }
     }
+
+    restore() {
+        const gl = this.context.gl;
+        if (this.current) {
+            gl.enable(gl.DEPTH_TEST);
+        } else {
+            gl.disable(gl.DEPTH_TEST);
+        }
+    }
 }
 
 export class DepthFunc implements Value<DepthFuncType> {
@@ -267,6 +322,10 @@ export class DepthFunc implements Value<DepthFuncType> {
             this.context.gl.depthFunc(v);
             this.current = v;
         }
+    }
+
+    restore() {
+        this.context.gl.depthFunc(this.current);
     }
 }
 
@@ -292,6 +351,15 @@ export class Blend implements Value<boolean> {
             this.current = v;
         }
     }
+
+    restore() {
+        const gl = this.context.gl;
+        if (this.current) {
+            gl.enable(gl.BLEND);
+        } else {
+            gl.disable(gl.BLEND);
+        }
+    }
 }
 
 export class BlendFunc implements Value<BlendFuncType> {
@@ -313,6 +381,10 @@ export class BlendFunc implements Value<BlendFuncType> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.blendFunc(this.current[0], this.current[1]);
+    }
 }
 
 export class BlendColor implements Value<Color> {
@@ -333,6 +405,10 @@ export class BlendColor implements Value<Color> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.blendColor(this.current.r, this.current.g, this.current.b, this.current.a);
+    }
 }
 
 export class Program implements Value<?WebGLProgram> {
@@ -352,6 +428,10 @@ export class Program implements Value<?WebGLProgram> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.useProgram(this.current);
+    }
 }
 
 export class ActiveTextureUnit implements Value<TextureUnitType> {
@@ -370,6 +450,10 @@ export class ActiveTextureUnit implements Value<TextureUnitType> {
             this.context.gl.activeTexture(v);
             this.current = v;
         }
+    }
+
+    restore() {
+        this.context.gl.activeTexture(this.current);
     }
 }
 
@@ -392,6 +476,10 @@ export class Viewport implements Value<ViewportType> {
             this.current = v;
         }
     }
+
+    restore() {
+        this.context.gl.viewport(this.current[0], this.current[1], this.current[2], this.current[3]);
+    }
 }
 
 export class BindFramebuffer implements Value<?WebGLFramebuffer> {
@@ -411,6 +499,11 @@ export class BindFramebuffer implements Value<?WebGLFramebuffer> {
             gl.bindFramebuffer(gl.FRAMEBUFFER, v);
             this.current = v;
         }
+    }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.current);
     }
 }
 
@@ -432,6 +525,11 @@ export class BindRenderbuffer implements Value<?WebGLRenderbuffer> {
             this.current = v;
         }
     }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.bindRenderbuffer(gl.RENDERBUFFER, this.current);
+    }
 }
 
 export class BindTexture implements Value<?WebGLTexture> {
@@ -451,6 +549,11 @@ export class BindTexture implements Value<?WebGLTexture> {
             gl.bindTexture(gl.TEXTURE_2D, v);
             this.current = v;
         }
+    }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.bindTexture(gl.TEXTURE_2D, this.current);
     }
 }
 
@@ -472,6 +575,11 @@ export class BindVertexBuffer implements Value<?WebGLBuffer> {
             this.current = v;
         }
     }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.current);
+    }
 }
 
 export class BindElementBuffer implements Value<?WebGLBuffer> {
@@ -491,6 +599,11 @@ export class BindElementBuffer implements Value<?WebGLBuffer> {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, v);
         this.current = v;
     }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.current);
+    }
 }
 
 export class BindVertexArrayOES implements Value<any> {
@@ -508,6 +621,12 @@ export class BindVertexArrayOES implements Value<any> {
         if (this.current !== v && this.context.extVertexArrayObject) {
             this.context.extVertexArrayObject.bindVertexArrayOES(v);
             this.current = v;
+        }
+    }
+
+    restore() {
+        if (this.context.extVertexArrayObject) {
+            this.context.extVertexArrayObject.bindVertexArrayOES(this.current);
         }
     }
 }
@@ -530,6 +649,11 @@ export class PixelStoreUnpack implements Value<number> {
             this.current = v;
         }
     }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, this.current);
+    }
 }
 
 export class PixelStoreUnpackPremultiplyAlpha implements Value<boolean> {
@@ -549,6 +673,11 @@ export class PixelStoreUnpackPremultiplyAlpha implements Value<boolean> {
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, (v: any));
             this.current = v;
         }
+    }
+
+    restore() {
+        const gl = this.context.gl;
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, (this.current: any));
     }
 }
 
@@ -593,6 +722,12 @@ export class ColorAttachment extends FramebufferValue<?WebGLTexture> implements 
     setDirty() {
         this.dirty = true;
     }
+
+    restore() {
+        const gl = this.context.gl;
+        this.context.bindFramebuffer.restore();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.current, 0);
+    }
 }
 
 export class DepthAttachment extends FramebufferValue<?WebGLRenderbuffer> implements Value<?WebGLRenderbuffer> {
@@ -605,5 +740,11 @@ export class DepthAttachment extends FramebufferValue<?WebGLRenderbuffer> implem
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, v);
             this.current = v;
         }
+    }
+
+    restore() {
+        const gl = this.context.gl;
+        this.context.bindFramebuffer.restore();
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.current);
     }
 }

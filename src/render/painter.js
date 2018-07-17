@@ -32,6 +32,7 @@ import hillshade from './draw_hillshade';
 import raster from './draw_raster';
 import background from './draw_background';
 import debug from './draw_debug';
+import custom from './draw_custom';
 
 const draw = {
     symbol,
@@ -43,7 +44,8 @@ const draw = {
     hillshade,
     raster,
     background,
-    debug
+    debug,
+    custom
 };
 
 import type Transform from '../geo/transform';
@@ -416,7 +418,7 @@ class Painter {
 
     renderLayer(painter: Painter, sourceCache: SourceCache, layer: StyleLayer, coords: Array<OverscaledTileID>) {
         if (layer.isHidden(this.transform.zoom)) return;
-        if (layer.type !== 'background' && !coords.length) return;
+        if (layer.type !== 'background' && layer.type !== 'custom' && !coords.length) return;
         this.id = layer.id;
 
         draw[layer.type](painter, sourceCache, layer, coords);

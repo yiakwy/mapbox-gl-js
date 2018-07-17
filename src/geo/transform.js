@@ -425,6 +425,10 @@ class Transform {
         return cache[posMatrixKey];
     }
 
+    customLayerMatrix(): Float32Array {
+        return mat4.scale(new Float64Array(16), this.projMatrix, [this.worldSize, this.worldSize, 1]);
+    }
+
     _constrain() {
         if (!this.center || !this.width || !this.height || this._constraining) return;
 

@@ -26,6 +26,25 @@ var map = window.map = new mapboxgl.Map({
     hash: true
 });
 
+class Custom {
+    constructor() {
+        this.id = 'mycustomlayer';
+        this.type = 'custom';
+    }
+
+    render(gl, matrix) {
+    }
+
+    hasTransition() {
+        return false;
+    }
+
+}
+
+map.on('load', function() {
+    map.addLayer(new Custom(), 'road-primary');
+});
+
 </script>
 </body>
 </html>
