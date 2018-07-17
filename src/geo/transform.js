@@ -425,7 +425,7 @@ class Transform {
         return cache[posMatrixKey];
     }
 
-    customLayerMatrix(): Float32Array {
+    customLayerMatrix(): Float64Array {
         return mat4.scale(new Float64Array(16), this.projMatrix, [this.worldSize, this.worldSize, 1]);
     }
 

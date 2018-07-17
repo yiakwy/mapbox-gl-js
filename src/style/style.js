@@ -50,7 +50,7 @@ import type {Callback} from '../types/callback';
 import type EvaluationParameters from './evaluation_parameters';
 import type {Placement} from '../symbol/placement';
 import type {Cancelable} from '../types/cancelable';
-import type {CustomStyleLayer} from './custom_style_layer';
+import {CustomLayerSpecification} from './custom_layer_spec';
 
 const supportedDiffOperations = pick(diffOperations, [
     'addLayer',
@@ -547,7 +547,7 @@ class Style extends Evented {
      * ID `before`, or appended if `before` is omitted.
      * @param {string} [before] ID of an existing layer to insert before
      */
-    addLayer(layerObject: LayerSpecification | CustomStyleLayer, before?: string, options?: {validate?: boolean}) {
+    addLayer(layerObject: LayerSpecification | CustomLayerSpecification, before?: string, options?: {validate?: boolean}) {
         this._checkLoaded();
 
         const id = layerObject.id;

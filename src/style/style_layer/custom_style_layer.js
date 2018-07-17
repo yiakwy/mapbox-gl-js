@@ -1,15 +1,14 @@
 // @flow
 
 import StyleLayer from '../style_layer';
+import {CustomLayerSpecification} from '../custom_layer_spec';
 
 class CustomStyleLayer extends StyleLayer {
 
-    // TODO
-    implementation: any;
+    implementation: CustomLayerSpecification;
 
-    constructor(implementation) {
-        this.id = implementation.id;
-        this.type = 'custom';
+    constructor(implementation: CustomLayerSpecification) {
+        super(implementation, {});
         this.implementation = implementation;
     }
 

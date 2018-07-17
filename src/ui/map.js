@@ -30,6 +30,7 @@ import type {LngLatBoundsLike} from '../geo/lng_lat_bounds';
 import type {RequestParameters} from '../util/ajax';
 import type {StyleOptions} from '../style/style';
 import type {MapEvent, MapDataEvent} from './events';
+import {CustomLayerSpecification} from '../style/custom_layer_spec';
 
 import type ScrollZoomHandler from './handler/scroll_zoom';
 import type BoxZoomHandler from './handler/box_zoom';
@@ -1223,7 +1224,7 @@ class Map extends Camera {
      * @see [Add a vector tile source](https://www.mapbox.com/mapbox-gl-js/example/vector-source/)
      * @see [Add a WMS source](https://www.mapbox.com/mapbox-gl-js/example/wms/)
      */
-    addLayer(layer: LayerSpecification, before?: string) {
+    addLayer(layer: LayerSpecification | CustomLayerSpecification, before?: string) {
         this.style.addLayer(layer, before);
         this._update(true);
         return this;
