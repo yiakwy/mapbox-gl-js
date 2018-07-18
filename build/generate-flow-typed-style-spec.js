@@ -114,6 +114,8 @@ fs.writeFileSync('flow-typed/style-spec.js', `// Generated code; do not edit. Ed
 
 declare type ColorSpecification = string;
 
+declare type FormattedSpecification = string;
+
 declare type FilterSpecification =
     | ['has', string]
     | ['!has', string]

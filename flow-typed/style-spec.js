@@ -2,6 +2,8 @@
 
 declare type ColorSpecification = string;
 
+declare type FormattedSpecification = string;
+
 declare type FilterSpecification =
     | ['has', string]
     | ['!has', string]
@@ -77,6 +79,7 @@ declare type VectorSourceSpecification = {
     "url"?: string,
     "tiles"?: Array<string>,
     "bounds"?: [number, number, number, number],
+    "scheme"?: "xyz" | "tms",
     "minzoom"?: number,
     "maxzoom"?: number,
     "attribution"?: string
@@ -222,7 +225,7 @@ declare type SymbolLayerSpecification = {|
         "icon-pitch-alignment"?: PropertyValueSpecification<"map" | "viewport" | "auto">,
         "text-pitch-alignment"?: PropertyValueSpecification<"map" | "viewport" | "auto">,
         "text-rotation-alignment"?: PropertyValueSpecification<"map" | "viewport" | "auto">,
-        "text-field"?: DataDrivenPropertyValueSpecification<string>,
+        "text-field"?: DataDrivenPropertyValueSpecification<FormattedSpecification>,
         "text-font"?: DataDrivenPropertyValueSpecification<Array<string>>,
         "text-size"?: DataDrivenPropertyValueSpecification<number>,
         "text-max-width"?: DataDrivenPropertyValueSpecification<number>,
