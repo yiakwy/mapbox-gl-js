@@ -77,6 +77,7 @@ declare type VectorSourceSpecification = {
     "url"?: string,
     "tiles"?: Array<string>,
     "bounds"?: [number, number, number, number],
+    "scheme"?: "xyz" | "tms",
     "minzoom"?: number,
     "maxzoom"?: number,
     "attribution"?: string
@@ -116,7 +117,8 @@ declare type GeojsonSourceSpecification = {|
     "cluster"?: boolean,
     "clusterRadius"?: number,
     "clusterMaxZoom"?: number,
-    "lineMetrics"?: boolean
+    "lineMetrics"?: boolean,
+    "generateId"?: boolean
 |}
 
 declare type VideoSourceSpecification = {|
