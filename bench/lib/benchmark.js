@@ -12,8 +12,9 @@ export type Measurement = {
 };
 
 class Benchmark {
-    constructor(styleURL) {
+    constructor(styleURL, location) {
         this.styleURL = styleURL;
+        this.location = location;
         this._measureAsync = this._measureAsync.bind(this);
     }
 

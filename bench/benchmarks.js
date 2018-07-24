@@ -4,8 +4,6 @@ import mapboxgl from '../src';
 import { accessToken, styleURL } from './lib/parameters';
 import { tiles, locations } from './lib/style_locations';
 
-console.log('tiles', tiles);
-console.log('locations', locations);
 mapboxgl.accessToken = accessToken;
 
 window.mapboxglVersions = window.mapboxglVersions || [];
@@ -34,10 +32,11 @@ function register(Benchmark) {
         case 'QueryBox':
         case 'QueryPoint':
           locations.forEach(location => {
-            if (!window.mapboxglBenchmarks[Benchmark.name][location.description.toLowerCase().split(' ').join('_')]) {
-              window.mapboxglBenchmarks[Benchmark.name][location.description.toLowerCase().split(' ').join('_')] = {};
+            const descriptor = location.description.toLowerCase().split(' ').join('_');
+            if (!window.mapboxglBenchmarks[Benchmark.name][descriptor]) {
+              window.mapboxglBenchmarks[Benchmark.name][descriptor] = {};
             }
-            window.mapboxglBenchmarks[Benchmark.name][location.description.toLowerCase().split(' ').join('_')][style] = new Benchmark(style);
+            window.mapboxglBenchmarks[Benchmark.name][descriptor][style] = new Benchmark(style, location);
           });
           break;
         default:

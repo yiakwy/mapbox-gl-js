@@ -5,9 +5,6 @@ import Axis from './lib/axis';
 import { summaryStatistics, regression, kde, probabilitiesOfSuperiority } from './lib/statistics';
 import { tiles, locations } from './lib/style_locations';
 
-// console.log('tiles', tiles);
-// console.log('locations', locations);
-
 const versionColor = d3.scaleOrdinal(['#1b9e77', '#7570b3', '#d95f02']);
 const formatSample = d3.format(".3r");
 const isStyleBench = process.env.STYLE_BENCHMARK;
@@ -338,7 +335,11 @@ class BenchmarkRow extends React.Component {
                     <tbody>
                         <tr><th><h2 className="col4"><a href={`#${this.props.name}`} onClick={this.reload}>{this.props.name}</a></h2></th>
                             {this.props.versions.map(version => <th style={{color: versionColor(version.name)}} key={version.name}>{version.name}</th>)}</tr>
-                        <h4 style={{color: '#1287A8'}}>{this.props.location.description}</h4>
+                        <tr>
+                          <th><p style={{color: '#1287A8'}}>{this.props.location.description}</p></th>
+                          <th><p style={{color: '#1287A8'}}>Zoom Level: {this.props.location.zoom}</p></th>
+                          <th><p style={{color: '#1287A8'}}>Lat: {this.props.location.center[1]} Lng: {this.props.location.center[0]}</p></th>
+                        </tr>
                         {this.renderStatistic('(20% trimmed) Mean',
                             (version) => <p>
                                 {formatSample(version.summary.trimmedMean)} ms
