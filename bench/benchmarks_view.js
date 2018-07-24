@@ -338,6 +338,7 @@ class BenchmarkRow extends React.Component {
                     <tbody>
                         <tr><th><h2 className="col4"><a href={`#${this.props.name}`} onClick={this.reload}>{this.props.name}</a></h2></th>
                             {this.props.versions.map(version => <th style={{color: versionColor(version.name)}} key={version.name}>{version.name}</th>)}</tr>
+                        <h4 style={{color: '#1287A8'}}>{this.props.location.description}</h4>
                         {this.renderStatistic('(20% trimmed) Mean',
                             (version) => <p>
                                 {formatSample(version.summary.trimmedMean)} ms
@@ -417,7 +418,6 @@ class BenchmarksTable extends React.Component {
     }
 }
 
-const versions = window.mapboxglVersions;
 const benchmarks = [];
 const filter = window.location.hash.substr(1);
 let finished = false;
@@ -427,8 +427,6 @@ for (const name in window.mapboxglBenchmarks) {
     if (filter && name !== filter)
         continue;
 
-    const benchmark = { name, versions: [] };
-
     if (isStyleBench) {
       switch (name) {
         case 'Layout':
@@ -437,36 +435,39 @@ for (const name in window.mapboxglBenchmarks) {
         case 'Paint':
         case 'QueryBox':
         case 'QueryPoint':
-          locations.forEach(location => benchmarks.push({benchmark, location}));
+          locations.forEach(location => {
+            benchmarks.push({benchmark: {
+              location,
+              name
+            }});
+          });
           break;
       }
     } else {
       benchmarks.push(benchmark);
     }
-    console.log('benchmarks', benchmarks);
-    console.log('window.mapboxglBenchmarks[name]', window.mapboxglBenchmarks[name]);
-    debugger;
 
     for (const zoomLevel in window.mapboxglBenchmarks[name]) {
-      console.log('zoomLevel', window.mapboxglBenchmarks[name][zoomLevel]);
+      benchmarks.forEach(test => test.benchmark.versions = []);
       for (const ver in window.mapboxglBenchmarks[name][zoomLevel]) {
-        const version = {
-          name: ver,
-          status: 'waiting',
-          logs: [],
-          samples: [],
-          style: {},
-          summary: {}
-        };
-
-        // for each style, push a new version with the style url
-        benchmark.versions.push(version);
+        benchmarks.forEach(test => {
+          test.benchmark.versions.push({
+            name: ver,
+            status: 'waiting',
+            logs: [],
+            samples: [],
+            style: {},
+            summary: {}
+          });
+        });
 
         promise = promise.then(() => {
+          const versions = benchmarks.filter(test => test.benchmark.location.description.toLowerCase().split(' ').join('_') === zoomLevel)[0].benchmark.versions;
+          const version = versions.filter(version => version.name === ver)[0];
           version.status = 'running';
           update();
 
-          return zoomLevel[ver].run()
+          return window.mapboxglBenchmarks[name][zoomLevel][ver].run()
           .then(measurements => {
             // scale measurements down by iteration count, so that
             // they represent (average) time for a single iteration
@@ -485,7 +486,6 @@ for (const name in window.mapboxglBenchmarks) {
         });
       }
     }
-    console.log('styleBenchmarks', benchmarks);
 }
 
 promise = promise.then(() => {
@@ -495,7 +495,7 @@ promise = promise.then(() => {
 
 function update() {
     ReactDOM.render(
-        <BenchmarksTable versions={versions} benchmarks={benchmarks} finished={finished}/>,
+        <BenchmarksTable benchmarks={benchmarks} finished={finished}/>,
         document.getElementById('benchmarks')
     );
 }
