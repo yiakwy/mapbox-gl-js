@@ -7,9 +7,7 @@ import { tiles, locations } from './lib/style_locations';
 mapboxgl.accessToken = accessToken;
 
 window.mapboxglVersions = window.mapboxglVersions || [];
-console.log('benchmarks.js mapboxglVersions', window.mapboxglVersions);
 window.mapboxglBenchmarks = window.mapboxglBenchmarks || {};
-console.log('window.mapboxglBenchmarks', window.mapboxglBenchmarks);
 
 const version = process.env.BENCHMARK_VERSION;
 const isStyleBench = process.env.STYLE_BENCHMARK;
