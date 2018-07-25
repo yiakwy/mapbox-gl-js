@@ -40,7 +40,6 @@ export default class Layout extends Benchmark {
     }
 
     fetchStyle(): Promise<StyleSpecification> {
-        console.log('this and styleURL', this, this.styleURL);
         return fetch(normalizeStyleURL(this.styleURL))
             .then(response => response.json());
     }
@@ -50,7 +49,9 @@ export default class Layout extends Benchmark {
         return fetch(normalizeSourceURL(sourceURL))
             .then(response => response.json())
             .then((tileJSON: TileJSON) => {
-                return Promise.all(this.tileIDs().map(tileID => {
+                const tileIDs = this.location && this.location.tileID ? [this.location.tileID] : this.tileIDs();
+                return Promise.all(tileIDs.map(tileID => {
+                    console.log('tileID', tileID);
                     return fetch((normalizeTileURL(tileID.canonical.url(tileJSON.tiles))))
                         .then(response => response.arrayBuffer())
                         .then(buffer => ({tileID, buffer}));
@@ -59,13 +60,13 @@ export default class Layout extends Benchmark {
     }
 
     setup(): Promise<void> {
-        console.log('setup');
         return this.fetchStyle()
             .then((styleJSON) => {
                 this.layerIndex = new StyleLayerIndex(deref(styleJSON.layers));
                 return Promise.all([createStyle(styleJSON), this.fetchTiles(styleJSON)]);
             })
             .then(([style, tiles]) => {
+                console.log('tiles', tiles);
                 this.tiles = tiles;
                 this.glyphs = {};
                 this.icons = {};
@@ -90,7 +91,6 @@ export default class Layout extends Benchmark {
 
     bench(getGlyphs: Function = (params, callback) => callback(null, this.glyphs[JSON.stringify(params)]),
           getImages: Function = (params, callback) => callback(null, this.icons[JSON.stringify(params)])) {
-        console.log('bench');
         const actor = {
             send(action, params, callback) {
                 setTimeout(() => {
@@ -109,7 +109,7 @@ export default class Layout extends Benchmark {
             promise = promise.then(() => {
                 const workerTile = new WorkerTile({
                     tileID: tileID,
-                    zoom: tileID.overscaledZ,
+                    zoom: this.location.zoom,
                     tileSize: 512,
                     overscaling: 1,
                     showCollisionBoxes: false,

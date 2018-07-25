@@ -434,8 +434,8 @@ for (const name in window.mapboxglBenchmarks) {
     if (isStyleBench && name !== 'StyleLayerCreate' && name !== 'StyleValidate') {
       switch (name) {
         case 'Layout':
-          tiles.forEach(tile => benchmarks.push({benchmark, tile: JSON.parse(JSON.stringify(tile))}));
-          break;
+          // tiles.forEach(tile => benchmarks.push({benchmark, tile: JSON.parse(JSON.stringify(tile))}));
+          // break;
         case 'Paint':
         case 'QueryBox':
         case 'QueryPoint':
@@ -452,7 +452,7 @@ for (const name in window.mapboxglBenchmarks) {
       }
 
       for (const zoomLevel in window.mapboxglBenchmarks[name]) {
-        console.log('benchmarks', benchmarks, window.mapboxglBenchmarks[name], window.mapboxglBenchmarks[name][zoomLevel]);
+        // console.log('benchmarks', benchmarks, window.mapboxglBenchmarks[name], window.mapboxglBenchmarks[name][zoomLevel]);
         benchmarks.forEach(test => test.benchmark.versions = []);
         for (const ver in window.mapboxglBenchmarks[name][zoomLevel]) {
           benchmarks.forEach(test => {

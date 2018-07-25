@@ -23,7 +23,7 @@ function register(Benchmark) {
       }
 
       switch (Benchmark.name) {
-        // case 'Layout':
+        case 'Layout':
         //   // tiles.forEach(tile => benchmarks.push({benchmark, tile: JSON.parse(JSON.stringify(tile))}));
         //   break;
         case 'Paint':
