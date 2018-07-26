@@ -431,11 +431,9 @@ for (const name in window.mapboxglBenchmarks) {
     if (filter && name !== filter)
         continue;
 
-    if (isStyleBench && name !== 'StyleLayerCreate' && name !== 'StyleValidate') {
+    if (isStyleBench) {
       switch (name) {
         case 'Layout':
-          // tiles.forEach(tile => benchmarks.push({benchmark, tile: JSON.parse(JSON.stringify(tile))}));
-          // break;
         case 'Paint':
         case 'QueryBox':
         case 'QueryPoint':
@@ -452,23 +450,32 @@ for (const name in window.mapboxglBenchmarks) {
       }
 
       for (const zoomLevel in window.mapboxglBenchmarks[name]) {
-        // console.log('benchmarks', benchmarks, window.mapboxglBenchmarks[name], window.mapboxglBenchmarks[name][zoomLevel]);
-        benchmarks.forEach(test => test.benchmark.versions = []);
+        benchmarks.forEach(test => {
+          if (test.hasOwnProperty('benchmark')) {
+            test.benchmark.versions = [];
+          }
+        });
         for (const ver in window.mapboxglBenchmarks[name][zoomLevel]) {
           benchmarks.forEach(test => {
-            test.benchmark.versions.push({
-              name: ver,
-              status: 'waiting',
-              logs: [],
-              samples: [],
-              style: {},
-              summary: {}
-            });
+            if (test.hasOwnProperty('benchmark')) {
+              test.benchmark.versions.push({
+                name: ver,
+                status: 'waiting',
+                logs: [],
+                samples: [],
+                style: {},
+                summary: {}
+              });
+            }
           });
 
           promise = promise.then(() => {
-            const versions = benchmarks.filter(test => test.benchmark.location.description.toLowerCase().split(' ').join('_') === zoomLevel)[0].benchmark.versions;
+            const versions = benchmarks.filter(test => {
+              console.log('test', test);
+              return test.benchmark && test.benchmark.location.description.toLowerCase().split(' ').join('_') === zoomLevel && test.benchmark.name === name;
+            })[0].benchmark.versions;
             const version = versions.filter(version => version.name === ver)[0];
+            console.log('version', version);
             version.status = 'running';
             update();
 
@@ -495,7 +502,6 @@ for (const name in window.mapboxglBenchmarks) {
       const benchmark = { name, versions: [] };
       benchmarks.push(benchmark);
 
-      console.log('window.mapboxglBenchmarks[name]', window.mapboxglBenchmarks[name]);
       for (const style in window.mapboxglBenchmarks[name]) {
           const version = {
               name: style,
@@ -506,7 +512,7 @@ for (const name in window.mapboxglBenchmarks) {
           };
 
           benchmark.versions.push(version);
-          console.log('benchmark', benchmark);
+
           promise = promise.then(() => {
               version.status = 'running';
               update();
@@ -530,7 +536,7 @@ for (const name in window.mapboxglBenchmarks) {
           });
       }
     }
-
+    console.log('benchmarks', benchmarks);
 }
 
 promise = promise.then(() => {

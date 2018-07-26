@@ -64,8 +64,8 @@ import FilterEvaluate from './benchmarks/filter_evaluate';
 
 register(Layout);
 register(Paint);
-register(Validate);
-register(StyleLayerCreate);
+// register(Validate);
+// register(StyleLayerCreate);
 register(QueryPoint);
 register(QueryBox);
 
