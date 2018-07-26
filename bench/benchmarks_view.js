@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import Axis from './lib/axis';
 import { summaryStatistics, regression, kde, probabilitiesOfSuperiority } from './lib/statistics';
-import { tiles, locations } from './lib/style_locations';
+import { locations } from './lib/style_locations';
 
 const versionColor = d3.scaleOrdinal(['#1b9e77', '#7570b3', '#d95f02']);
 const formatSample = d3.format(".3r");
@@ -431,35 +431,31 @@ for (const name in window.mapboxglBenchmarks) {
     if (filter && name !== filter)
         continue;
 
-    if (isStyleBench) {
-      switch (name) {
-        case 'Layout':
-        case 'Paint':
-        case 'QueryBox':
-        case 'QueryPoint':
-          locations.forEach(location => {
-            benchmarks.push({benchmark: {
-              location,
-              name
-            }});
-          });
-          break;
-        default:
-          const benchmark = { name, versions: [] };
-          benchmarks.push(benchmark);
-      }
+    if (isStyleBench && name !== 'StyleLayerCreate' && name !== 'StyleValidate') {
+      // create a new test in the requested benchmark suite for each location
+      // this benchmarks array is distinct from window.mapboxglBenchmarks and is used to create and update the UI
+      locations.forEach(location => {
+        benchmarks.push({benchmark: {
+          location,
+          name
+        }});
+      });
 
-      for (const zoomLevel in window.mapboxglBenchmarks[name]) {
-        benchmarks.forEach(test => {
-          if (test.hasOwnProperty('benchmark')) {
-            test.benchmark.versions = [];
+      for (const loc in window.mapboxglBenchmarks[name]) {
+        // we have to add the versions array here
+        // otherwise, we end up duplicating tests
+        benchmarks.forEach(bench => {
+          if (bench.hasOwnProperty('benchmark')) {
+            bench.benchmark.versions = [];
           }
         });
-        for (const ver in window.mapboxglBenchmarks[name][zoomLevel]) {
-          benchmarks.forEach(test => {
-            if (test.hasOwnProperty('benchmark')) {
-              test.benchmark.versions.push({
-                name: ver,
+
+        for (const style in window.mapboxglBenchmarks[name][loc]) {
+          // push a test object for each style
+          benchmarks.forEach(bench => {
+            if (bench.hasOwnProperty('benchmark')) {
+              bench.benchmark.versions.push({
+                name: style,
                 status: 'waiting',
                 logs: [],
                 samples: [],
@@ -470,16 +466,13 @@ for (const name in window.mapboxglBenchmarks) {
           });
 
           promise = promise.then(() => {
-            const versions = benchmarks.filter(test => {
-              console.log('test', test);
-              return test.benchmark && test.benchmark.location.description.toLowerCase().split(' ').join('_') === zoomLevel && test.benchmark.name === name;
-            })[0].benchmark.versions;
-            const version = versions.filter(version => version.name === ver)[0];
-            console.log('version', version);
+            // we have to find the correct version to update on each test run or else the UI will not update properly
+            const versions = benchmarks.filter(bench => bench.benchmark && bench.benchmark.location.description.toLowerCase().split(' ').join('_') === loc && bench.benchmark.name === name)[0].benchmark.versions;
+            const version = versions.filter(version => version.name === style)[0];
             version.status = 'running';
             update();
 
-            return window.mapboxglBenchmarks[name][zoomLevel][ver].run()
+            return window.mapboxglBenchmarks[name][loc][style].run()
             .then(measurements => {
               // scale measurements down by iteration count, so that
               // they represent (average) time for a single iteration
@@ -502,9 +495,9 @@ for (const name in window.mapboxglBenchmarks) {
       const benchmark = { name, versions: [] };
       benchmarks.push(benchmark);
 
-      for (const style in window.mapboxglBenchmarks[name]) {
+      for (const ver in window.mapboxglBenchmarks[name]) {
           const version = {
-              name: style,
+              name: ver,
               status: 'waiting',
               logs: [],
               samples: [],
@@ -517,7 +510,7 @@ for (const name in window.mapboxglBenchmarks) {
               version.status = 'running';
               update();
 
-              return window.mapboxglBenchmarks[name][style].run()
+              return window.mapboxglBenchmarks[name][ver].run()
                   .then(measurements => {
                       // scale measurements down by iteration count, so that
                       // they represent (average) time for a single iteration
@@ -536,7 +529,6 @@ for (const name in window.mapboxglBenchmarks) {
           });
       }
     }
-    console.log('benchmarks', benchmarks);
 }
 
 promise = promise.then(() => {

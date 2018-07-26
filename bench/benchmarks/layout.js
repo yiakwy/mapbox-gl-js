@@ -51,7 +51,6 @@ export default class Layout extends Benchmark {
             .then((tileJSON: TileJSON) => {
                 const tileIDs = this.location && this.location.tileID ? [this.location.tileID] : this.tileIDs();
                 return Promise.all(tileIDs.map(tileID => {
-                    console.log('tileID', tileID);
                     return fetch((normalizeTileURL(tileID.canonical.url(tileJSON.tiles))))
                         .then(response => response.arrayBuffer())
                         .then(buffer => ({tileID, buffer}));
@@ -66,7 +65,6 @@ export default class Layout extends Benchmark {
                 return Promise.all([createStyle(styleJSON), this.fetchTiles(styleJSON)]);
             })
             .then(([style, tiles]) => {
-                console.log('tiles', tiles);
                 this.tiles = tiles;
                 this.glyphs = {};
                 this.icons = {};
@@ -107,9 +105,10 @@ export default class Layout extends Benchmark {
 
         for (const {tileID, buffer} of this.tiles) {
             promise = promise.then(() => {
+                const zoom = this.location && this.location.zoom ? this.location.zoom : tileID.overscaledZ;
                 const workerTile = new WorkerTile({
-                    tileID: tileID,
-                    zoom: this.location.zoom,
+                    tileID,
+                    zoom,
                     tileSize: 512,
                     overscaling: 1,
                     showCollisionBoxes: false,
