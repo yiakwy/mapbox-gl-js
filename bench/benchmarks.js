@@ -1,7 +1,7 @@
 // @flow
 
 import mapboxgl from '../src';
-import { accessToken, styleURL } from './lib/parameters';
+import { accessToken, styleURL, isStyleBench } from './lib/parameters';
 import { locations } from './lib/style_locations';
 
 mapboxgl.accessToken = accessToken;
@@ -10,7 +10,6 @@ window.mapboxglVersions = window.mapboxglVersions || [];
 window.mapboxglBenchmarks = window.mapboxglBenchmarks || {};
 
 const version = process.env.BENCHMARK_VERSION;
-const isStyleBench = process.env.STYLE_BENCHMARK;
 window.mapboxglVersions.push(version);
 
 function register(Benchmark) {

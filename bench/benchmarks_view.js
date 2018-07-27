@@ -4,10 +4,10 @@ import * as d3 from 'd3';
 import Axis from './lib/axis';
 import { summaryStatistics, regression, kde, probabilitiesOfSuperiority } from './lib/statistics';
 import { locations } from './lib/style_locations';
+import { isStyleBench } from './lib/parameters';
 
 const versionColor = d3.scaleOrdinal(['#1b9e77', '#7570b3', '#d95f02']);
 const formatSample = d3.format(".3r");
-const isStyleBench = process.env.STYLE_BENCHMARK;
 
 class StatisticsPlot extends React.Component {
     constructor(props) {

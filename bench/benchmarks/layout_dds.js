@@ -21,7 +21,7 @@ export default class LayoutDDS extends Layout {
         const style = {
             "version": 8,
             "sources": {
-                "mapbox": { "type": "vector", "url": this.styleURL }
+                "mapbox": { "type": "vector", "url": "mapbox://mapbox.mapbox-streets-v7" }
             },
             "layers": []
         };
