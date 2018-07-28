@@ -787,6 +787,7 @@ test('Map', (t) => {
         t.equal(map.getContainer().childNodes.length, 3);
         map.remove();
         t.equal(map.getContainer().childNodes.length, 0);
+        t.equal(map._controls.length, 0);
         t.end();
     });
 
@@ -795,11 +796,12 @@ test('Map', (t) => {
         const control = {
             onAdd: function(_) {
                 t.equal(map, _, 'addTo() called with map');
-                t.end();
                 return window.document.createElement('div');
             }
         };
         map.addControl(control);
+        t.equal(map._controls[1], control, "saves reference to added controls");
+        t.end();
     });
 
     t.test('#removeControl', (t) => {
@@ -810,11 +812,13 @@ test('Map', (t) => {
             },
             onRemove: function(_) {
                 t.equal(map, _, 'onRemove() called with map');
-                t.end();
             }
         };
         map.addControl(control);
         map.removeControl(control);
+        t.equal(map._controls.length, 1, "removes removed controls from map's control array");
+        t.end();
+
     });
 
     t.test('#project', (t) => {
