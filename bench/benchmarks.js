@@ -21,13 +21,8 @@ function register(Benchmark) {
       }
 
       switch (Benchmark.name) {
-        // StyleLayerCreate and StyleValidate are important for benching styles but are not location dependent so process them like normal bench tests
-        case 'StyleValidate':
-        case 'StyleLayerCreate':
-          window.mapboxglBenchmarks[Benchmark.name][style] = new Benchmark(style);
-          break;
-        // default case covers Layout, Paint, QueryBox and QueryPoint
-        default:
+        case 'Layout':
+        case 'Paint':
           // create tests for each location/tile
           // we do this because with styles, it's important to see how a style responds on various types of tiles
           // (e.g. CJK, dense urban, rural, etc) rather than averaging all tiles together into one result
@@ -38,6 +33,12 @@ function register(Benchmark) {
             }
             window.mapboxglBenchmarks[Benchmark.name][descriptor][style] = new Benchmark(style, location);
           });
+          break;
+        // default case covers StyleLayerCreate, StyleValidate, QueryBox and QueryPoint
+        // StyleLayerCreate and StyleValidate are important for benching styles but are not location dependent so process them like normal bench tests
+        // QueryBox and QueryPoint need the locations but do not need to be processed per-location (e.g. can be averaged into one test) so we can can just process them as normal
+        default:
+          window.mapboxglBenchmarks[Benchmark.name][style] = new Benchmark(style, locations);
       }
     });
   } else {

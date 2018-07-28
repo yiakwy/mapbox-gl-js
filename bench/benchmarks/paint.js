@@ -9,12 +9,12 @@ const zooms = [4, 8, 11, 13, 15, 17];
 export default class Paint extends Benchmark {
     setup() {
       let promises = [];
-      if (this.location) {
+      if (this.locations) {
         promises.push(createMap({
-          zoom: this.location.zoom,
+          zoom: this.locations.zoom,
           width,
           height,
-          center: this.location.center,
+          center: this.locations.center,
           style: this.styleURL
         }));
       } else {
